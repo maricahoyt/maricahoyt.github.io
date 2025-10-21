@@ -16,7 +16,7 @@ font-family: verdana, arial;
 color: white;
 }
 #healthbar {
-background-color: darkgreen;
+background-color: darkseagreen;
 width: 100%;
 height: 50px;
 font-family: verdana, arial;
@@ -26,7 +26,7 @@ color: white;
 text-align: justify;
 }
 #goalwindow {
-background-color: orange;
+background-color: mediumslateblue;
 width: 100%;
 height: 490px;
 overflow-y: scroll;
@@ -34,25 +34,31 @@ font-family: verdana, arial;
 }
 
 .categorybox {
-background-color: white;
+background-color: lavender;
 font-family:verdana, arial;
 xoverflow-y: scroll;
 margin: 10px;
 }
 
-<!-- this part is not working -->
 .heading {
-height: 40px;
+xheight: 20px;
 font-family: verdana, arial;
+text-align:center;
+background-color: gainsboro;
+color: mediumslateblue;
+font-weight: bold;
+font-size: 1.3rem;
 }
 
-.heading h2 {
-background-color: white;
+<!-- not needed? -->
+.heading h3 {
+background-color: gainsboro;
 text-align: center;
+color: mediumslateblue;
 }
 
 .columnsbox {
-background-color: white;
+background-color: mediumslateblue;
 width: 100%;
 overflow-y: scroll;
 font-family: verdana, arial;
@@ -61,19 +67,25 @@ justify-content: space-between;
 }
 
 .column1 {
-background-color: brown;
+background-color: lavender;
 width:49%;
 xheight: 480px;
 font-family: verdana, arial;
-color: white;
+color: mediumslateblue;
 }
 
 .column2 {
-background-color: brown;
+background-color: lavender;
 width:49%;
 xheight: 480px;
 font-family: verdana, arial;
-color: white;
+color: mediumslateblue;
+}
+
+ul {
+list-style-type: none;
+margin: 0;
+padding: 5px;
 }
 
 </style>
@@ -83,21 +95,31 @@ color: white;
 Pet Name
 </div>
 <div id="healthbar">
-Health = 12345
+Health = <span id="health">0</span>
 </div>
+
+<!--
+Game logic:
+- health starts at 0
+- individual items worth: XS (1) S (3) M (5) L (10) XL (20)
+- goals sorted by worth (least to most)
+- fixed categories (including Other), sorted alphabetically except Other at bottom
+- when you cross off an item:
+  + add worth to player's Health
+  + if health has increased to new level (10, 100, 1000, or whatever), go to next "level"
+  + each level has its own pet image
+
+-->
 
 <div id="goalwindow">
 
  <div class="categorybox">
   <div class="heading">
-   <h2>Social</h2>
+   Social
   </div> <!-- heading -->
   <div class="columnsbox">
    <div class="column1">
-    <ul>
-     <li>Talked to people</li>
-     <li>Called my dad</li>
-     <li>Etc etc etc</li>
+    <ul id="social-pos">
     </ul>
    </div> <!-- column1 -->
    <div class="column2">
@@ -108,11 +130,16 @@ Health = 12345
 
  <div class="categorybox">
   <div class="heading">
-   <h2>Health</h2>
+   Health
   </div> <!-- heading -->
   <div class="columnsbox">
    <div class="column1">
     <ul>
+     <li>exercise</li>
+     <li>food healthy food</li>
+     <li>bowle movememnts</li>
+     <li>fresh air</li>
+     <li>carrots</li>
      <li>exercise</li>
      <li>food healthy food</li>
      <li>bowle movememnts</li>
@@ -128,7 +155,7 @@ Health = 12345
 
  <div class="categorybox">
   <div class="heading">
-   <h2>Wealth</h2>
+   Wealth
   </div> <!-- heading -->
   <div class="columnsbox">
    <div class="column1">
@@ -149,6 +176,45 @@ Health = 12345
 </body>
 <script>
 console.log("Marica is super cool!")
+
+var health = 0
+var categories = [
+	{name: 'Social', goals: [
+		{name: 'Talked to people', size: 10, isDone: false},
+		{name: 'Called my dad', size: 3, isDone: false},
+		{name: 'Etc etc etc', size: 5, isDone: false},
+	]},
+]
+
+var levels = [
+	{image: '/images/image0.png', healthTarget: 100},
+	{image: '/images/image1.png', healthTarget: 1000},
+]
+
+var currentLevel = 5
+
+var socialPos = document.getElementById('social-pos')
+
+var goals = categories[0].goals
+for (var i = 0; i < goals.length; i++) {
+  let goal = goals[i]
+  var li = document.createElement('li')
+  var input = document.createElement('input')
+  input.type = 'checkbox'
+  input.id = 'check' + i.toString()
+  input.onclick = function() {
+    health = health + goal.size
+    let healthSpan = document.getElementById('health')
+    healthSpan.textContent = health
+  }
+  li.appendChild(input)
+  var label = document.createElement('label')
+  label.textContent = ' ' + goal.name
+  label.htmlFor = 'check' + i.toString()
+  li.appendChild(label)
+  socialPos.appendChild(li)
+}
+
 </script>
 </html>
 
